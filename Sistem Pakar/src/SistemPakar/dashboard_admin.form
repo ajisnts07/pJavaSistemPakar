@@ -50,13 +50,13 @@
                       <Component id="dataPenyakit" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="scrollAturan" max="32767" attributes="0"/>
                       <Component id="btnTambahAturan" min="-2" max="-2" attributes="0"/>
-                      <Component id="dataPenyakit2" min="-2" max="-2" attributes="0"/>
+                      <Component id="dataAturan" min="-2" max="-2" attributes="0"/>
                       <Component id="scrollGejala" max="32767" attributes="0"/>
                       <Component id="btnTambahGejala" min="-2" max="-2" attributes="0"/>
                       <Component id="btnTambahPenyakit" min="-2" max="-2" attributes="0"/>
-                      <Component id="dataPenyakit1" min="-2" max="-2" attributes="0"/>
+                      <Component id="dataGejala" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="scrollPenyakit1" max="32767" attributes="0"/>
+                          <Component id="scrollPenyakit" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -87,16 +87,16 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="scrollUser" min="-2" pref="213" max="-2" attributes="0"/>
-                      <Component id="scrollPenyakit1" min="-2" pref="213" max="-2" attributes="0"/>
+                      <Component id="scrollPenyakit" min="-2" pref="213" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="dataPenyakit1" min="-2" max="-2" attributes="0"/>
+                  <Component id="dataGejala" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btnTambahGejala" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                   <Component id="scrollGejala" min="-2" pref="213" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                  <Component id="dataPenyakit2" min="-2" max="-2" attributes="0"/>
+                  <Component id="dataAturan" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btnTambahAturan" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
@@ -180,14 +180,14 @@
             <Property name="text" type="java.lang.String" value="Tambah"/>
           </Properties>
         </Component>
-        <Container class="javax.swing.JScrollPane" name="scrollPenyakit1">
+        <Container class="javax.swing.JScrollPane" name="scrollPenyakit">
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="tabelPenyakit1">
+            <Component class="javax.swing.JTable" name="tabelPenyakit">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="new javax.swing.table.DefaultTableModel(&#xa;    new Object [][] {&#xa;        {null, null, null, null, null},&#xa;        {null, null, null, null, null},&#xa;        {null, null, null, null, null},&#xa;        {null, null, null, null, null}&#xa;    },&#xa;    new String [] {&#xa;        &quot;No&quot;, &quot;Kode&quot;, &quot;Nama&quot;, &quot;Deskripsi&quot;, &quot;Solusi&quot;&#xa;    }&#xa;)" type="code"/>
@@ -196,7 +196,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JLabel" name="dataPenyakit1">
+        <Component class="javax.swing.JLabel" name="dataGejala">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Nunito" size="14" style="1"/>
@@ -228,7 +228,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JLabel" name="dataPenyakit2">
+        <Component class="javax.swing.JLabel" name="dataAturan">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Nunito" size="14" style="1"/>
