@@ -3,13 +3,38 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package SistemPakar;
-
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
 /**
  *
  * @author admin01
  */
 public class dashboard_admin extends javax.swing.JFrame {
-
+private void load_table(){
+        // membuat tampilan model tabel
+        tabelPenyakit model = new tabelPenyakit();
+        model.addColumn("No");
+        model.addColumn("Nama");
+        model.addColumn("NIM");
+        model.addColumn("Jurusan");
+        model.addColumn("Alamat");
+        model.addColumn("Phone");
+        
+        //menampilkan data database kedalam tabel
+        try {
+            int no=1;
+            String sql = "select * from penyakit";
+            java.sql.Connection conn=(Connection)config.configDB();
+            java.sql.Statement stm=conn.createStatement();
+            java.sql.ResultSet res=stm.executeQuery(sql);
+            while(res.next()){
+                model.addRow(new Object[]{no++,res.getString(1),res.getString(2),res.getString(3),res.getString(4),res.getString(5)});
+            }
+            tabelPenyakit.setModel(model);
+        } catch (Exception e) {
+        }
     /**
      * Creates new form dashboard_admin
      */
@@ -32,12 +57,8 @@ public class dashboard_admin extends javax.swing.JFrame {
         btnKeluar = new javax.swing.JButton();
         dataPenyakit = new javax.swing.JLabel();
         btnTambahPenyakit = new javax.swing.JButton();
-        scrollPenyakit = new javax.swing.JScrollPane();
-        tabelPenyakit = new javax.swing.JTable();
         dataGejala = new javax.swing.JLabel();
         btnTambahGejala = new javax.swing.JButton();
-        scrollGejala = new javax.swing.JScrollPane();
-        tabelGejala = new javax.swing.JTable();
         dataAturan = new javax.swing.JLabel();
         btnTambahAturan = new javax.swing.JButton();
         scrollAturan = new javax.swing.JScrollPane();
@@ -60,11 +81,6 @@ public class dashboard_admin extends javax.swing.JFrame {
 
         btnKeluar.setBackground(new java.awt.Color(254, 254, 254));
         btnKeluar.setText("Keluar");
-        btnKeluar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnKeluarActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout navbarLayout = new javax.swing.GroupLayout(navbar);
         navbar.setLayout(navbarLayout);
@@ -93,37 +109,11 @@ public class dashboard_admin extends javax.swing.JFrame {
         btnTambahPenyakit.setBackground(new java.awt.Color(254, 254, 254));
         btnTambahPenyakit.setText("Tambah");
 
-        tabelPenyakit.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "No", "Kode", "Nama", "Deskripsi", "Solusi"
-            }
-        ));
-        scrollPenyakit.setViewportView(tabelPenyakit);
-
         dataGejala.setFont(new java.awt.Font("Nunito", 1, 14)); // NOI18N
         dataGejala.setText("Data Gejala");
 
         btnTambahGejala.setBackground(new java.awt.Color(254, 254, 254));
         btnTambahGejala.setText("Tambah");
-
-        tabelGejala.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "No", "Kode", "Nama Gejala", "Pertanyaan"
-            }
-        ));
-        scrollGejala.setViewportView(tabelGejala);
 
         dataAturan.setFont(new java.awt.Font("Nunito", 1, 14)); // NOI18N
         dataAturan.setText("Aturan");
@@ -169,25 +159,25 @@ public class dashboard_admin extends javax.swing.JFrame {
             bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(navbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bgWhiteLayout.createSequentialGroup()
-                .addContainerGap(20, Short.MAX_VALUE)
-                .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dataPenyakit)
-                    .addComponent(scrollAturan)
+                    .addComponent(scrollAturan, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnTambahAturan)
                     .addComponent(dataAturan)
-                    .addComponent(scrollGejala)
                     .addComponent(btnTambahGejala)
                     .addComponent(btnTambahPenyakit)
-                    .addComponent(dataGejala)
-                    .addGroup(bgWhiteLayout.createSequentialGroup()
-                        .addComponent(scrollPenyakit)
-                        .addGap(7, 7, 7)))
-                .addGap(24, 24, 24)
+                    .addComponent(dataGejala))
                 .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dataUser)
-                    .addComponent(scrollUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTambahUser))
-                .addContainerGap(19, Short.MAX_VALUE))
+                    .addGroup(bgWhiteLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dataUser)
+                            .addComponent(btnTambahUser)))
+                    .addGroup(bgWhiteLayout.createSequentialGroup()
+                        .addGap(464, 464, 464)
+                        .addComponent(scrollUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         bgWhiteLayout.setVerticalGroup(
             bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,16 +192,12 @@ public class dashboard_admin extends javax.swing.JFrame {
                     .addComponent(btnTambahPenyakit)
                     .addComponent(btnTambahUser))
                 .addGap(18, 18, 18)
-                .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollUser, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(scrollPenyakit, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(scrollUser, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dataGejala)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnTambahGejala)
-                .addGap(13, 13, 13)
-                .addComponent(scrollGejala, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(237, 237, 237)
                 .addComponent(dataAturan)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnTambahAturan)
@@ -233,12 +219,6 @@ public class dashboard_admin extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKeluarActionPerformed
-    formLogin fl = new formLogin();
-    fl.show();
-    this.dispose();     // TODO add your handling code here:
-    }//GEN-LAST:event_btnKeluarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -288,13 +268,9 @@ public class dashboard_admin extends javax.swing.JFrame {
     private javax.swing.JLabel dataUser;
     private javax.swing.JPanel navbar;
     private javax.swing.JScrollPane scrollAturan;
-    private javax.swing.JScrollPane scrollGejala;
-    private javax.swing.JScrollPane scrollPenyakit;
     private javax.swing.JScrollPane scrollUser;
     private javax.swing.JLabel sistemPakar;
     private javax.swing.JTable tabelAturan;
-    private javax.swing.JTable tabelGejala;
-    private javax.swing.JTable tabelPenyakit;
     private javax.swing.JTable tabelUser;
     // End of variables declaration//GEN-END:variables
 }
