@@ -3,43 +3,55 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package SistemPakar;
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
+import java.sql.SQLException;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author admin01
  */
 public class dashboard_admin extends javax.swing.JFrame {
-private void load_table(){
-        // membuat tampilan model tabel
-        tabelPenyakit model = new tabelPenyakit();
-        model.addColumn("No");
-        model.addColumn("Nama");
-        model.addColumn("NIM");
-        model.addColumn("Jurusan");
-        model.addColumn("Alamat");
-        model.addColumn("Phone");
-        
-        //menampilkan data database kedalam tabel
-        try {
-            int no=1;
-            String sql = "select * from penyakit";
-            java.sql.Connection conn=(Connection)config.configDB();
-            java.sql.Statement stm=conn.createStatement();
-            java.sql.ResultSet res=stm.executeQuery(sql);
-            while(res.next()){
-                model.addRow(new Object[]{no++,res.getString(1),res.getString(2),res.getString(3),res.getString(4),res.getString(5)});
-            }
-            tabelPenyakit.setModel(model);
-        } catch (Exception e) {
-        }
+    private DefaultTableModel model;
     /**
      * Creates new form dashboard_admin
      */
     public dashboard_admin() {
         initComponents();
+
+        model = new DefaultTableModel();
+        tabelPenyakit.setModel(model);
+        model.addColumn("Kode");
+        model.addColumn("Nama Penyakit");
+        model.addColumn("Deskripsi");
+        model.addColumn("Solusi");
+
+        tampilPenyakit();
+    }
+
+    private void tampilPenyakit() {
+        model.getDataVector().removeAllElements();
+        model.fireTableDataChanged();
+
+        try {
+            Statement stat = (Statement)koneksi.koneksiDb().createStatement();
+            String sql = "SELECT * FROM penyakit";
+            ResultSet dataPenyakit = stat.executeQuery(sql);
+
+            while (dataPenyakit.next()) {
+                Object[] obj = new Object[4];
+                obj[0] = dataPenyakit.getString("kode");
+                obj[1] = dataPenyakit.getString("nama");
+                obj[2] = dataPenyakit.getString("deskripsi");
+                obj[3] = dataPenyakit.getString("solusi");
+
+                model.addRow(obj);
+            }
+        } catch (SQLException e) {JOptionPane.showMessageDialog(null, e.getMessage());}
     }
 
     /**
@@ -52,158 +64,117 @@ private void load_table(){
     private void initComponents() {
 
         bgWhite = new javax.swing.JPanel();
-        navbar = new javax.swing.JPanel();
-        sistemPakar = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        labelSistemPakar = new javax.swing.JLabel();
         btnKeluar = new javax.swing.JButton();
-        dataPenyakit = new javax.swing.JLabel();
         btnTambahPenyakit = new javax.swing.JButton();
-        dataGejala = new javax.swing.JLabel();
-        btnTambahGejala = new javax.swing.JButton();
-        dataAturan = new javax.swing.JLabel();
-        btnTambahAturan = new javax.swing.JButton();
-        scrollAturan = new javax.swing.JScrollPane();
-        tabelAturan = new javax.swing.JTable();
-        dataUser = new javax.swing.JLabel();
-        btnTambahUser = new javax.swing.JButton();
-        scrollUser = new javax.swing.JScrollPane();
-        tabelUser = new javax.swing.JTable();
+        dataPenyakit = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tabelPenyakit = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tabel = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         bgWhite.setBackground(new java.awt.Color(254, 254, 254));
 
-        navbar.setBackground(new java.awt.Color(238, 99, 99));
-        navbar.setForeground(new java.awt.Color(1, 1, 1));
+        jPanel1.setBackground(new java.awt.Color(238, 99, 99));
 
-        sistemPakar.setFont(new java.awt.Font("Nunito", 1, 14)); // NOI18N
-        sistemPakar.setForeground(new java.awt.Color(254, 254, 254));
-        sistemPakar.setText("SistemPakar.");
+        labelSistemPakar.setFont(new java.awt.Font("Nunito", 1, 18)); // NOI18N
+        labelSistemPakar.setForeground(new java.awt.Color(254, 254, 254));
+        labelSistemPakar.setText("Sistem Pakar");
+        labelSistemPakar.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         btnKeluar.setBackground(new java.awt.Color(254, 254, 254));
         btnKeluar.setText("Keluar");
 
-        javax.swing.GroupLayout navbarLayout = new javax.swing.GroupLayout(navbar);
-        navbar.setLayout(navbarLayout);
-        navbarLayout.setHorizontalGroup(
-            navbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(navbarLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(sistemPakar)
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(labelSistemPakar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnKeluar)
-                .addGap(26, 26, 26))
+                .addGap(30, 30, 30))
         );
-        navbarLayout.setVerticalGroup(
-            navbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, navbarLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(navbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(sistemPakar)
-                    .addComponent(btnKeluar))
-                .addContainerGap())
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnKeluar)
+                    .addComponent(labelSistemPakar))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        btnTambahPenyakit.setBackground(new java.awt.Color(254, 254, 254));
+        btnTambahPenyakit.setText("Tambah");
+        btnTambahPenyakit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTambahPenyakitActionPerformed(evt);
+            }
+        });
 
         dataPenyakit.setFont(new java.awt.Font("Nunito", 1, 14)); // NOI18N
         dataPenyakit.setText("Data Penyakit");
 
-        btnTambahPenyakit.setBackground(new java.awt.Color(254, 254, 254));
-        btnTambahPenyakit.setText("Tambah");
-
-        dataGejala.setFont(new java.awt.Font("Nunito", 1, 14)); // NOI18N
-        dataGejala.setText("Data Gejala");
-
-        btnTambahGejala.setBackground(new java.awt.Color(254, 254, 254));
-        btnTambahGejala.setText("Tambah");
-
-        dataAturan.setFont(new java.awt.Font("Nunito", 1, 14)); // NOI18N
-        dataAturan.setText("Aturan");
-
-        btnTambahAturan.setBackground(new java.awt.Color(254, 254, 254));
-        btnTambahAturan.setText("Tambah");
-
-        tabelAturan.setModel(new javax.swing.table.DefaultTableModel(
+        tabelPenyakit.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "No", "Jika", "Maka"
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        scrollAturan.setViewportView(tabelAturan);
+        jScrollPane2.setViewportView(tabelPenyakit);
 
-        dataUser.setFont(new java.awt.Font("Nunito", 1, 14)); // NOI18N
-        dataUser.setText("Data User");
-
-        btnTambahUser.setBackground(new java.awt.Color(254, 254, 254));
-        btnTambahUser.setText("Tambah");
-
-        tabelUser.setModel(new javax.swing.table.DefaultTableModel(
+        tabel.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null,},
-                {null, null, null, null,},
-                {null, null, null, null,},
-                {null, null, null, null,}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "No", "ID User", "Role", "Nama",
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        scrollUser.setViewportView(tabelUser);
+        jScrollPane3.setViewportView(tabel);
 
         javax.swing.GroupLayout bgWhiteLayout = new javax.swing.GroupLayout(bgWhite);
         bgWhite.setLayout(bgWhiteLayout);
         bgWhiteLayout.setHorizontalGroup(
             bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(navbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bgWhiteLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(bgWhiteLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
                 .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dataPenyakit)
-                    .addComponent(scrollAturan, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTambahAturan)
-                    .addComponent(dataAturan)
-                    .addComponent(btnTambahGejala)
                     .addComponent(btnTambahPenyakit)
-                    .addComponent(dataGejala))
-                .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(bgWhiteLayout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dataUser)
-                            .addComponent(btnTambahUser)))
-                    .addGroup(bgWhiteLayout.createSequentialGroup()
-                        .addGap(464, 464, 464)
-                        .addComponent(scrollUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)))
+                .addGap(30, 30, 30))
         );
         bgWhiteLayout.setVerticalGroup(
             bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bgWhiteLayout.createSequentialGroup()
-                .addComponent(navbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dataPenyakit)
-                    .addComponent(dataUser))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnTambahPenyakit)
-                    .addComponent(btnTambahUser))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(scrollUser, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(dataPenyakit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(dataGejala)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnTambahGejala)
-                .addGap(237, 237, 237)
-                .addComponent(dataAturan)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnTambahAturan)
-                .addGap(9, 9, 9)
-                .addComponent(scrollAturan, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addComponent(btnTambahPenyakit)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(264, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -220,6 +191,12 @@ private void load_table(){
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnTambahPenyakitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahPenyakitActionPerformed
+        this.dispose();
+        tambah_penyakit f = new tambah_penyakit();
+        f.setVisible(true);
+    }//GEN-LAST:event_btnTambahPenyakitActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -227,7 +204,7 @@ private void load_table(){
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http:labelSistemPakaroad.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -258,19 +235,13 @@ private void load_table(){
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bgWhite;
     private javax.swing.JButton btnKeluar;
-    private javax.swing.JButton btnTambahAturan;
-    private javax.swing.JButton btnTambahGejala;
     private javax.swing.JButton btnTambahPenyakit;
-    private javax.swing.JButton btnTambahUser;
-    private javax.swing.JLabel dataAturan;
-    private javax.swing.JLabel dataGejala;
     private javax.swing.JLabel dataPenyakit;
-    private javax.swing.JLabel dataUser;
-    private javax.swing.JPanel navbar;
-    private javax.swing.JScrollPane scrollAturan;
-    private javax.swing.JScrollPane scrollUser;
-    private javax.swing.JLabel sistemPakar;
-    private javax.swing.JTable tabelAturan;
-    private javax.swing.JTable tabelUser;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel labelSistemPakar;
+    private javax.swing.JTable tabel;
+    private javax.swing.JTable tabelPenyakit;
     // End of variables declaration//GEN-END:variables
 }

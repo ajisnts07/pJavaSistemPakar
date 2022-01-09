@@ -3,20 +3,153 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package SistemPakar;
+import java.awt.HeadlessException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.PreparedStatement;
+import javax.swing.JOptionPane;
+import java.sql.SQLException;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author admin01
  */
 public class tambah_penyakit extends javax.swing.JFrame {
-
+    private DefaultTableModel model;
+    String kode, nama, deskripsi, solusi;
     /**
      * Creates new form tambah_penyakit
      */
     public tambah_penyakit() {
         initComponents();
+
+        model = new DefaultTableModel();
+        tabelPenyakit.setModel(model);  
+        model.addColumn("Kode");
+        model.addColumn("Nama Penyakit");
+        model.addColumn("Deskripsi");
+        model.addColumn("Solusi");
+
+        tampilData();
     }
 
+    private void loadData() {
+        kode = txtKodePenyakit.getText();
+        nama = txtNamaPenyakit.getText();
+        deskripsi = txtDeskripsiPenyakit.getText();
+        solusi = txtSolusi.getText();
+    }
+
+    private void tampilData() {
+        model.getDataVector().removeAllElements();
+        model.fireTableDataChanged();
+
+        try {
+            Statement stat = (Statement)koneksi.koneksiDb().createStatement();
+            String sql = "SELECT * FROM penyakit";
+            ResultSet dataPenyakit = stat.executeQuery(sql);
+
+            while (dataPenyakit.next()) {
+                Object[] obj = new Object[4];
+                obj[0] = dataPenyakit.getString("kode");
+                obj[1] = dataPenyakit.getString("nama");
+                obj[2] = dataPenyakit.getString("deskripsi");
+                obj[3] = dataPenyakit.getString("solusi");
+
+                model.addRow(obj);
+            }
+        } catch (SQLException e) {JOptionPane.showMessageDialog(null, e.getMessage());}
+    }
+
+    private void tambahData() {
+        loadData();
+        try {
+            if (txtKodePenyakit.getText().length()==0) {
+                JOptionPane.showMessageDialog(null, "Isi kode penyakit terlebih dahulu");
+            } else if (txtNamaPenyakit.getText().length()==0) {
+                JOptionPane.showMessageDialog(null, "Isi nama penyakit terlebih dahulu");
+            } else if (txtDeskripsiPenyakit.getText().length()==0) {
+                JOptionPane.showMessageDialog(null, "Isi deskripsi penyakit terlebih dahulu");
+            } else if (txtSolusi.getText().length()==0) {
+               JOptionPane.showMessageDialog(null, "Isi solusi penyakit terlebih dahulu");
+            } else {
+                int confirm = JOptionPane.showConfirmDialog(null, "Apakah anda ingin menyimpan data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    try {
+                        String sql = "INSERT INTO penyakit VALUES ('"+txtKodePenyakit.getText()+"','"+txtNamaPenyakit.getText()+"','"+txtDeskripsiPenyakit.getText()+"','"+txtSolusi.getText()+"')";
+                        java.sql.Connection conn = (Connection)koneksi.koneksiDb();
+                        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+                        pst.execute();
+                        JOptionPane.showMessageDialog(null, "Berhasil, Data Berhasil Disimpan!");
+                        this.dispose();
+                        tambah_penyakit f = new tambah_penyakit();
+                        f.setVisible(true);
+                    } catch (SQLException | HeadlessException e) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
+                }
+            }
+        } catch (Exception e){}
+    }
+
+    private void hapusData() {
+        loadData();
+        int confirm = JOptionPane.showConfirmDialog(null, "Bernarkah anda yakin ingin menghapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                String sql = "DELETE FROM penyakit WHERE kode = '"+kode+"'";
+                java.sql.Connection conn = (Connection)koneksi.koneksiDb();
+                java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Berhasil, data sudah di hapus!");
+                this.dispose();
+                tambah_penyakit f = new tambah_penyakit();
+                f.setVisible(true);
+                tampilData();
+                clearData(); 
+            } catch (SQLException | HeadlessException e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+    }
+
+    private void editData() {
+        loadData();
+        int confirm = JOptionPane.showConfirmDialog(null, "Bernarkah anda ingin menyimpan perubahan ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                String sql = "UPDATE penyakit SET nama = '"+nama+"', deskripsi = '"+deskripsi+"', solusi = '"+solusi+"' WHERE kode = '"+kode+"' ";
+                java.sql.Connection conn = (Connection)koneksi.koneksiDb();
+                java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Berhasil, data sudah di perbaharui!");
+                this.dispose();
+                tambah_penyakit f = new tambah_penyakit();
+                f.setVisible(true);
+                tampilData();
+                clearData(); 
+            } catch (SQLException | HeadlessException e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+    }
+
+    private void clearData() {
+        txtKodePenyakit.setText("");
+        txtNamaPenyakit.setText("");
+        txtDeskripsiPenyakit.setText("");
+        txtSolusi.setText("");
+    }
+
+    private void selectData() {
+        int i = tabelPenyakit.getSelectedRow();
+        txtKodePenyakit.setText(""+model.getValueAt(i, 0));
+        txtNamaPenyakit.setText(""+model.getValueAt(i, 1));
+        txtDeskripsiPenyakit.setText(""+model.getValueAt(i, 2));
+        txtSolusi.setText(""+model.getValueAt(i, 3));
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,21 +161,24 @@ public class tambah_penyakit extends javax.swing.JFrame {
 
         bgWhite = new javax.swing.JPanel();
         bgRed = new javax.swing.JPanel();
-        labelLupaKataSandi = new javax.swing.JLabel();
-        labelUsername = new javax.swing.JLabel();
-        inputUsername = new javax.swing.JTextField();
-        btnCari = new javax.swing.JButton();
-        labelUsername1 = new javax.swing.JLabel();
-        inputUsername1 = new javax.swing.JTextField();
-        labelUsername2 = new javax.swing.JLabel();
-        labelUsername3 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        labelKodePenyakit = new javax.swing.JLabel();
+        labelTambahPenyakit = new javax.swing.JLabel();
+        txtKodePenyakit = new javax.swing.JTextField();
+        labelNamaPenyakit = new javax.swing.JLabel();
+        txtNamaPenyakit = new javax.swing.JTextField();
+        labelDeskripsiPenyakit = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txtDeskripsiPenyakit = new javax.swing.JTextArea();
+        labelSolusi = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txtSolusi = new javax.swing.JTextArea();
+        btnTambah = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        btnCari1 = new javax.swing.JButton();
-        btnCari2 = new javax.swing.JButton();
-        btnCari3 = new javax.swing.JButton();
+        tabelPenyakit = new javax.swing.JTable();
+        btnKembali = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -50,73 +186,63 @@ public class tambah_penyakit extends javax.swing.JFrame {
 
         bgRed.setBackground(new java.awt.Color(238, 99, 99));
 
-        labelLupaKataSandi.setFont(new java.awt.Font("Nunito", 1, 24)); // NOI18N
-        labelLupaKataSandi.setForeground(new java.awt.Color(254, 254, 254));
-        labelLupaKataSandi.setText("Tambah Penyakit");
+        labelKodePenyakit.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
+        labelKodePenyakit.setForeground(new java.awt.Color(254, 254, 254));
+        labelKodePenyakit.setText("Kode Penyakit");
 
-        labelUsername.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
-        labelUsername.setForeground(new java.awt.Color(254, 254, 254));
-        labelUsername.setText("Kode Penyakit");
+        labelTambahPenyakit.setFont(new java.awt.Font("Nunito", 1, 24)); // NOI18N
+        labelTambahPenyakit.setForeground(new java.awt.Color(254, 254, 254));
+        labelTambahPenyakit.setText("Tambah Penyakit");
 
-        btnCari.setBackground(new java.awt.Color(254, 254, 254));
-        btnCari.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
-        btnCari.setText("Tambah");
-        btnCari.addActionListener(new java.awt.event.ActionListener() {
+        labelNamaPenyakit.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
+        labelNamaPenyakit.setForeground(new java.awt.Color(254, 254, 254));
+        labelNamaPenyakit.setText("Nama Penyakit");
+
+        labelDeskripsiPenyakit.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
+        labelDeskripsiPenyakit.setForeground(new java.awt.Color(254, 254, 254));
+        labelDeskripsiPenyakit.setText("Deskripsi Penyakit");
+
+        txtDeskripsiPenyakit.setColumns(20);
+        txtDeskripsiPenyakit.setRows(5);
+        jScrollPane3.setViewportView(txtDeskripsiPenyakit);
+
+        labelSolusi.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
+        labelSolusi.setForeground(new java.awt.Color(254, 254, 254));
+        labelSolusi.setText("Solusi");
+
+        txtSolusi.setColumns(20);
+        txtSolusi.setRows(5);
+        jScrollPane4.setViewportView(txtSolusi);
+
+        btnTambah.setBackground(new java.awt.Color(254, 254, 254));
+        btnTambah.setText("Tambah");
+        btnTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCariActionPerformed(evt);
+                btnTambahActionPerformed(evt);
             }
         });
 
-        labelUsername1.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
-        labelUsername1.setForeground(new java.awt.Color(254, 254, 254));
-        labelUsername1.setText("Nama Penyakit");
-
-        inputUsername1.addActionListener(new java.awt.event.ActionListener() {
+        btnEdit.setBackground(new java.awt.Color(254, 254, 254));
+        btnEdit.setText("Edit");
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputUsername1ActionPerformed(evt);
+                btnEditActionPerformed(evt);
             }
         });
 
-        labelUsername2.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
-        labelUsername2.setForeground(new java.awt.Color(254, 254, 254));
-        labelUsername2.setText("Deskripsi Penyakit");
-
-        labelUsername3.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
-        labelUsername3.setForeground(new java.awt.Color(254, 254, 254));
-        labelUsername3.setText("Solusi Penyakit");
-
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane2.setViewportView(jTextArea2);
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
-
-        btnCari1.setBackground(new java.awt.Color(254, 254, 254));
-        btnCari1.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
-        btnCari1.setText("Edit");
-        btnCari1.addActionListener(new java.awt.event.ActionListener() {
+        btnHapus.setBackground(new java.awt.Color(254, 254, 254));
+        btnHapus.setText("Hapus");
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCari1ActionPerformed(evt);
+                btnHapusActionPerformed(evt);
             }
         });
 
-        btnCari2.setBackground(new java.awt.Color(254, 254, 254));
-        btnCari2.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
-        btnCari2.setText("Hapus");
-        btnCari2.addActionListener(new java.awt.event.ActionListener() {
+        btnClear.setBackground(new java.awt.Color(254, 254, 254));
+        btnClear.setText("Clear");
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCari2ActionPerformed(evt);
-            }
-        });
-
-        btnCari3.setBackground(new java.awt.Color(254, 254, 254));
-        btnCari3.setFont(new java.awt.Font("Nunito", 0, 13)); // NOI18N
-        btnCari3.setText("Clear");
-        btnCari3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCari3ActionPerformed(evt);
+                btnClearActionPerformed(evt);
             }
         });
 
@@ -124,60 +250,87 @@ public class tambah_penyakit extends javax.swing.JFrame {
         bgRed.setLayout(bgRedLayout);
         bgRedLayout.setHorizontalGroup(
             bgRedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(bgRedLayout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addGroup(bgRedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bgRedLayout.createSequentialGroup()
+                .addContainerGap(25, Short.MAX_VALUE)
+                .addGroup(bgRedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(bgRedLayout.createSequentialGroup()
-                        .addComponent(btnCari2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCari3, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(bgRedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(labelUsername3)
-                        .addComponent(labelUsername2)
-                        .addComponent(labelUsername1)
-                        .addComponent(labelUsername)
-                        .addComponent(inputUsername)
-                        .addComponent(labelLupaKataSandi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(inputUsername1)
-                        .addComponent(jScrollPane2)
-                        .addComponent(jScrollPane1)
-                        .addGroup(bgRedLayout.createSequentialGroup()
-                            .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(btnCari1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(25, Short.MAX_VALUE))
+                        .addComponent(labelSolusi)
+                        .addComponent(labelDeskripsiPenyakit)
+                        .addComponent(labelNamaPenyakit)
+                        .addComponent(txtKodePenyakit)
+                        .addComponent(labelKodePenyakit)
+                        .addComponent(labelTambahPenyakit, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                        .addComponent(txtNamaPenyakit)
+                        .addComponent(jScrollPane3)
+                        .addComponent(jScrollPane4))
+                    .addGroup(bgRedLayout.createSequentialGroup()
+                        .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         bgRedLayout.setVerticalGroup(
             bgRedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bgRedLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(labelLupaKataSandi)
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addComponent(labelUsername)
+                .addContainerGap(60, Short.MAX_VALUE)
+                .addComponent(labelTambahPenyakit)
+                .addGap(18, 18, 18)
+                .addComponent(labelKodePenyakit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(inputUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtKodePenyakit, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelUsername1)
+                .addComponent(labelNamaPenyakit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(inputUsername1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtNamaPenyakit, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelUsername2)
+                .addComponent(labelDeskripsiPenyakit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelUsername3)
+                .addComponent(labelSolusi)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(69, 69, 69)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
                 .addGroup(bgRedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCari)
-                    .addComponent(btnCari1))
+                    .addComponent(btnTambah)
+                    .addComponent(btnEdit))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(bgRedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCari2)
-                    .addComponent(btnCari3))
-                .addGap(35, 35, 35))
+                    .addComponent(btnHapus)
+                    .addComponent(btnClear))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        tabelPenyakit.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tabelPenyakit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabelPenyakitMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tabelPenyakit);
+
+        btnKembali.setBackground(new java.awt.Color(238, 99, 99));
+        btnKembali.setForeground(new java.awt.Color(254, 254, 254));
+        btnKembali.setText("Kembali");
+        btnKembali.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnKembaliActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout bgWhiteLayout = new javax.swing.GroupLayout(bgWhite);
         bgWhite.setLayout(bgWhiteLayout);
@@ -185,20 +338,30 @@ public class tambah_penyakit extends javax.swing.JFrame {
             bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bgWhiteLayout.createSequentialGroup()
                 .addComponent(bgRed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(476, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
+                    .addGroup(bgWhiteLayout.createSequentialGroup()
+                        .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(18, 18, 18))
         );
         bgWhiteLayout.setVerticalGroup(
             bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(bgRed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(bgRed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(bgWhiteLayout.createSequentialGroup()
+                .addGap(45, 45, 45)
+                .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 614, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(bgWhite, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(bgWhite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,25 +371,31 @@ public class tambah_penyakit extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void inputUsername1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputUsername1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_inputUsername1ActionPerformed
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+        tambahData();
+    }//GEN-LAST:event_btnTambahActionPerformed
 
-    private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCariActionPerformed
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        editData();
+    }//GEN-LAST:event_btnEditActionPerformed
 
-    private void btnCari1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCari1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCari1ActionPerformed
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        hapusData();
+    }//GEN-LAST:event_btnHapusActionPerformed
 
-    private void btnCari2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCari2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCari2ActionPerformed
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        clearData();
+    }//GEN-LAST:event_btnClearActionPerformed
 
-    private void btnCari3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCari3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCari3ActionPerformed
+    private void tabelPenyakitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelPenyakitMouseClicked
+        selectData();
+    }//GEN-LAST:event_tabelPenyakitMouseClicked
+
+    private void btnKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKembaliActionPerformed
+        this.dispose();
+        dashboard_admin f = new dashboard_admin();
+        f.setVisible(true);
+    }//GEN-LAST:event_btnKembaliActionPerformed
 
     /**
      * @param args the command line arguments
@@ -266,20 +435,23 @@ public class tambah_penyakit extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bgRed;
     private javax.swing.JPanel bgWhite;
-    private javax.swing.JButton btnCari;
-    private javax.swing.JButton btnCari1;
-    private javax.swing.JButton btnCari2;
-    private javax.swing.JButton btnCari3;
-    private javax.swing.JTextField inputUsername;
-    private javax.swing.JTextField inputUsername1;
+    private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnHapus;
+    private javax.swing.JButton btnKembali;
+    private javax.swing.JButton btnTambah;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JLabel labelLupaKataSandi;
-    private javax.swing.JLabel labelUsername;
-    private javax.swing.JLabel labelUsername1;
-    private javax.swing.JLabel labelUsername2;
-    private javax.swing.JLabel labelUsername3;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JLabel labelDeskripsiPenyakit;
+    private javax.swing.JLabel labelKodePenyakit;
+    private javax.swing.JLabel labelNamaPenyakit;
+    private javax.swing.JLabel labelSolusi;
+    private javax.swing.JLabel labelTambahPenyakit;
+    private javax.swing.JTable tabelPenyakit;
+    private javax.swing.JTextArea txtDeskripsiPenyakit;
+    private javax.swing.JTextField txtKodePenyakit;
+    private javax.swing.JTextField txtNamaPenyakit;
+    private javax.swing.JTextArea txtSolusi;
     // End of variables declaration//GEN-END:variables
 }
