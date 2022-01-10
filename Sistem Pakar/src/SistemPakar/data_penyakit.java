@@ -3,18 +3,55 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package SistemPakar;
-
+import java.awt.HeadlessException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.PreparedStatement;
+import javax.swing.JOptionPane;
+import java.sql.SQLException;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author admin01
  */
 public class data_penyakit extends javax.swing.JFrame {
-
+    private DefaultTableModel model;
     /**
      * Creates new form data_penyakit
      */
     public data_penyakit() {
         initComponents();
+
+        model = new DefaultTableModel();
+        tabelPenyakit.setModel(model);
+        model.addColumn("Kode");
+        model.addColumn("Nama Penyakit");
+        model.addColumn("Deskripsi");
+        model.addColumn("Solusi");
+
+        tampilPenyakit();
+    }
+
+    private void tampilPenyakit() {
+        model.getDataVector().removeAllElements();
+        model.fireTableDataChanged();
+
+        try {
+            Statement stat = (Statement)koneksi.koneksiDb().createStatement();
+            String sql = "SELECT * FROM penyakit";
+            ResultSet dataPenyakit = stat.executeQuery(sql);
+
+            while (dataPenyakit.next()) {
+                Object[] obj = new Object[4];
+                obj[0] = dataPenyakit.getString("kode");
+                obj[1] = dataPenyakit.getString("nama");
+                obj[2] = dataPenyakit.getString("deskripsi");
+                obj[3] = dataPenyakit.getString("solusi");
+
+                model.addRow(obj);
+            }
+        } catch (SQLException e) {JOptionPane.showMessageDialog(null, e.getMessage());}
     }
 
     /**
@@ -28,63 +65,74 @@ public class data_penyakit extends javax.swing.JFrame {
 
         bgWhite = new javax.swing.JPanel();
         navbar = new javax.swing.JPanel();
-        sistemPakar = new javax.swing.JLabel();
+        labelSistemPakar = new javax.swing.JLabel();
+        btnKeluar = new javax.swing.JButton();
         btnKembali = new javax.swing.JButton();
-        dataPenyakit = new javax.swing.JLabel();
-        scrollPenyakit = new javax.swing.JScrollPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
         tabelPenyakit = new javax.swing.JTable();
+        dataPenyakit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         bgWhite.setBackground(new java.awt.Color(254, 254, 254));
-        bgWhite.setForeground(new java.awt.Color(254, 254, 254));
 
         navbar.setBackground(new java.awt.Color(238, 99, 99));
-        navbar.setForeground(new java.awt.Color(1, 1, 1));
 
-        sistemPakar.setFont(new java.awt.Font("Nunito", 1, 14)); // NOI18N
-        sistemPakar.setForeground(new java.awt.Color(254, 254, 254));
-        sistemPakar.setText("SistemPakar.");
+        labelSistemPakar.setFont(new java.awt.Font("Nunito", 1, 18)); // NOI18N
+        labelSistemPakar.setForeground(new java.awt.Color(254, 254, 254));
+        labelSistemPakar.setText("Sistem Pakar");
+        labelSistemPakar.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+
+        btnKeluar.setBackground(new java.awt.Color(254, 254, 254));
+        btnKeluar.setText("Keluar");
 
         btnKembali.setBackground(new java.awt.Color(254, 254, 254));
         btnKembali.setText("Kembali");
+        btnKembali.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnKembaliActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout navbarLayout = new javax.swing.GroupLayout(navbar);
         navbar.setLayout(navbarLayout);
         navbarLayout.setHorizontalGroup(
             navbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(navbarLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(sistemPakar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 360, Short.MAX_VALUE)
+                .addGap(30, 30, 30)
+                .addComponent(labelSistemPakar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnKembali)
-                .addGap(26, 26, 26))
+                .addGap(18, 18, 18)
+                .addComponent(btnKeluar)
+                .addGap(30, 30, 30))
         );
         navbarLayout.setVerticalGroup(
             navbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, navbarLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(navbarLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(navbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(sistemPakar)
+                    .addComponent(btnKeluar)
+                    .addComponent(labelSistemPakar)
                     .addComponent(btnKembali))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        dataPenyakit.setFont(new java.awt.Font("Nunito", 1, 14)); // NOI18N
-        dataPenyakit.setText("Data Penyakit");
 
         tabelPenyakit.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "No", "Kode", "Nama", "Deskripsi", "Solusi"
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        scrollPenyakit.setViewportView(tabelPenyakit);
+        jScrollPane1.setViewportView(tabelPenyakit);
+
+        dataPenyakit.setFont(new java.awt.Font("Nunito", 0, 18)); // NOI18N
+        dataPenyakit.setText("Data Penyakit");
 
         javax.swing.GroupLayout bgWhiteLayout = new javax.swing.GroupLayout(bgWhite);
         bgWhite.setLayout(bgWhiteLayout);
@@ -92,21 +140,24 @@ public class data_penyakit extends javax.swing.JFrame {
             bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(navbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(bgWhiteLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(32, 32, 32)
                 .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dataPenyakit)
-                    .addComponent(scrollPenyakit, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(bgWhiteLayout.createSequentialGroup()
+                        .addComponent(dataPenyakit)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(bgWhiteLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+                        .addGap(34, 34, 34))))
         );
         bgWhiteLayout.setVerticalGroup(
             bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bgWhiteLayout.createSequentialGroup()
                 .addComponent(navbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(22, 22, 22)
                 .addComponent(dataPenyakit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollPenyakit, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 26, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE)
+                .addGap(31, 31, 31))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -122,6 +173,12 @@ public class data_penyakit extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKembaliActionPerformed
+//        this.dispose();
+//        dashboard_user f = new dashboard_user();
+//        f.setVisible(true);
+    }//GEN-LAST:event_btnKembaliActionPerformed
 
     /**
      * @param args the command line arguments
@@ -160,11 +217,12 @@ public class data_penyakit extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bgWhite;
+    private javax.swing.JButton btnKeluar;
     private javax.swing.JButton btnKembali;
     private javax.swing.JLabel dataPenyakit;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labelSistemPakar;
     private javax.swing.JPanel navbar;
-    private javax.swing.JScrollPane scrollPenyakit;
-    private javax.swing.JLabel sistemPakar;
     private javax.swing.JTable tabelPenyakit;
     // End of variables declaration//GEN-END:variables
 }

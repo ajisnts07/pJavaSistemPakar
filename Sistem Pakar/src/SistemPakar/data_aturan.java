@@ -15,35 +15,37 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author admin01
  */
-public class data_gejala extends javax.swing.JFrame {
+public class data_aturan extends javax.swing.JFrame {
     private DefaultTableModel model;
     /**
-     * Creates new form data_gejala
+     * Creates new form data_aturan
      */
-    public data_gejala() {
+    public data_aturan() {
         initComponents();
 
         model = new DefaultTableModel();
-        tabelGejala.setModel(model);
+        tabelAturan.setModel(model);
         model.addColumn("Kode");
-        model.addColumn("Nama Gejala");
+        model.addColumn("Jika");
+        model.addColumn("Maka");
 
-        tampilGejala();
+        tampilAturan();
     }
 
-    private void tampilGejala() {
+    private void tampilAturan() {
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
 
         try {
             Statement stat = (Statement)koneksi.koneksiDb().createStatement();
-            String sql = "SELECT * FROM gejala";
-            ResultSet dataGejala = stat.executeQuery(sql);
+            String sql = "SELECT * FROM aturan";
+            ResultSet dataAturan = stat.executeQuery(sql);
 
-            while (dataGejala.next()) {
-                Object[] obj = new Object[2];
-                obj[0] = dataGejala.getString("kode");
-                obj[1] = dataGejala.getString("nama");          
+            while (dataAturan.next()) {
+                Object[] obj = new Object[3];
+                obj[0] = dataAturan.getString("kode");
+                obj[1] = dataAturan.getString("jika");
+                obj[2] = dataAturan.getString("maka");
 
                 model.addRow(obj);
             }
@@ -64,9 +66,9 @@ public class data_gejala extends javax.swing.JFrame {
         labelSistemPakar = new javax.swing.JLabel();
         btnKeluar = new javax.swing.JButton();
         btnKembali = new javax.swing.JButton();
+        dataAturan = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabelGejala = new javax.swing.JTable();
-        dataGejala = new javax.swing.JLabel();
+        tabelAturan = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -97,7 +99,7 @@ public class data_gejala extends javax.swing.JFrame {
             .addGroup(navbarLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(labelSistemPakar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 454, Short.MAX_VALUE)
                 .addComponent(btnKembali)
                 .addGap(18, 18, 18)
                 .addComponent(btnKeluar)
@@ -114,7 +116,10 @@ public class data_gejala extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tabelGejala.setModel(new javax.swing.table.DefaultTableModel(
+        dataAturan.setFont(new java.awt.Font("Nunito", 0, 18)); // NOI18N
+        dataAturan.setText("Data Aturan");
+
+        tabelAturan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -125,10 +130,7 @@ public class data_gejala extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tabelGejala);
-
-        dataGejala.setFont(new java.awt.Font("Nunito", 0, 18)); // NOI18N
-        dataGejala.setText("Data Gejala");
+        jScrollPane1.setViewportView(tabelAturan);
 
         javax.swing.GroupLayout bgWhiteLayout = new javax.swing.GroupLayout(bgWhite);
         bgWhite.setLayout(bgWhiteLayout);
@@ -136,39 +138,32 @@ public class data_gejala extends javax.swing.JFrame {
             bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(navbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(bgWhiteLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addGap(33, 33, 33)
                 .addGroup(bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(bgWhiteLayout.createSequentialGroup()
-                        .addComponent(dataGejala)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(bgWhiteLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
-                        .addGap(34, 34, 34))))
+                    .addComponent(jScrollPane1)
+                    .addComponent(dataAturan))
+                .addGap(33, 33, 33))
         );
         bgWhiteLayout.setVerticalGroup(
             bgWhiteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bgWhiteLayout.createSequentialGroup()
                 .addComponent(navbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22)
-                .addComponent(dataGejala)
+                .addGap(18, 18, 18)
+                .addComponent(dataAturan)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
-                .addGap(31, 31, 31))
+                .addGap(35, 35, 35))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(bgWhite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+            .addComponent(bgWhite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(bgWhite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+            .addComponent(bgWhite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -197,20 +192,20 @@ public class data_gejala extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(data_gejala.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(data_aturan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(data_gejala.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(data_aturan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(data_gejala.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(data_aturan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(data_gejala.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(data_aturan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new data_gejala().setVisible(true);
+                new data_aturan().setVisible(true);
             }
         });
     }
@@ -219,10 +214,10 @@ public class data_gejala extends javax.swing.JFrame {
     private javax.swing.JPanel bgWhite;
     private javax.swing.JButton btnKeluar;
     private javax.swing.JButton btnKembali;
-    private javax.swing.JLabel dataGejala;
+    private javax.swing.JLabel dataAturan;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelSistemPakar;
     private javax.swing.JPanel navbar;
-    private javax.swing.JTable tabelGejala;
+    private javax.swing.JTable tabelAturan;
     // End of variables declaration//GEN-END:variables
 }
